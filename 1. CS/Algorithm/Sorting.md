@@ -261,10 +261,94 @@ public class sort_03_insertion {
 </details>
 
 ### 병합정렬 (Merge Sort)
+
+병합정렬에 대해 알아보겠습니다.   
+
+1. 데이터들이 한 개씩 쪼개어질 때까지 주어진 데이터를 두 개의 그룹으로 나누는 작업을 반복한다.   
+2. 하나씩 쪼개어진 데이터는 정렬된 상태가 된다.   
+3. 정렬된 데이터들을 쪼갠 역순으로 병합하면서 정렬하면 정렬된 상태의 전체 데이터를 구할 수 있다.   
+
+병합정렬의 시간 복잡도가 왜 NlogN인지 간단하게 설명해보겠습니다.   
+앞서 배운 정렬들에서 우리는 각 단계마다 비교를 N, N-1, N-2... 번씩 수행하였고 N^2번의 비교가 필요함을 알았습니다.   
+병합정렬의 경우에는 각 단계별로 N번의 비교가 이루어집니다.    
+하지만 이 단계는 N번 반복되는 것이 아니라, N의 Log2값을 취한 만큼 이루어집니다.   
+데이터가 2^10개인 1024개라고 생각해봅시다.   
+처음 분할 단계에서 데이터는 2개의 그룹으로 나뉘는 일을 10번 반복하여 1개씩 1024개로 쪼개집니다.   
+그리고 이 데이터들은 10번의 단계를 거쳐 정렬된 1024개의 데이터가 됩니다.   
+10 * 1024 = 10,240번의 비교를 통해 정렬이 완료되는 겁니다.   
+버블정렬의 경우 같은 데이터에 대해 523,776번의 비교가 필요한 걸 생각하면, 또 데이터의 개수가 늘어날수록 이 차이가 더 커질 거란 걸 생각하면 NlogN정렬 알고리즘들이 더 효율적인걸 알 수 있습니다.   
+   
 <details markdown="1">
 <summary>코드 접기/펼치기</summary>
 
 ```Java
+import java.util.ArrayList;
+import java.util.Random;
+
+public class sort_04_merge {
+	static int size = 10;
+	static int bound = 1000;
+	static int count = 0;
+	// 데이터의 갯수와 범위 설정
+
+	public static void main(String[] args) {
+		ArrayList<Integer> data = new ArrayList<Integer>();
+		Random random = new Random();
+
+		for (int i = 0; i < size; i++) {
+			data.add(random.nextInt(bound));
+		}
+		// 랜덤 값 넣어주기
+
+		System.out.println(data.toString());
+		// 랜덤하게 들어간 데이터 확인
+
+		//////////////// 병합정렬 구현코드는 하단으로 /////////////////
+		data = mergeSort(data);
+		//////////////////////////////////////////////////////
+
+		System.out.println(data.toString());
+		System.out.println("비교횟수 : " + count);
+	}
+
+	private static ArrayList<Integer> mergeSort(ArrayList<Integer> list) {
+		int size = list.size();
+		ArrayList<Integer> mergeList = new ArrayList<>();
+
+		if (size <= 1) {
+			return list;
+		} else {
+			ArrayList<Integer> left = new ArrayList<>();
+			ArrayList<Integer> right = new ArrayList<>();
+
+			for (int i = 0; i < (size / 2); i++) {
+				left.add(list.get(i));
+			}
+			for (int i = (size / 2); i < size; i++) {
+				right.add(list.get(i));
+			}
+
+			left = mergeSort(left);
+			right = mergeSort(right);
+
+			//System.out.println("left : " + left.toString());
+			//System.out.println("right : " + right.toString());
+
+			for (int i = 0, l = 0, r = 0; i < size; i++) {
+				if (r == right.size() || (l != left.size() && left.get(l) <= right.get(r))) {
+					mergeList.add(left.get(l));
+					l++;
+				} else {
+					mergeList.add(right.get(r));
+					r++;
+				}
+				count++;
+			}
+			//System.out.println("merge : " + mergeList.toString());
+			return mergeList;
+		}
+	}
+}
 ```
 
 </details>
